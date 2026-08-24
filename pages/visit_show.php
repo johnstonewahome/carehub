@@ -33,10 +33,10 @@ ob_start();
             $bits[] = 'P ' . $visit['pulse'];
         }
         if ($visit['temp_c']) {
-            $bits[] = 'T ' . rtrim(rtrim((string) $visit['temp_c'], '0'), '.') . '°C';
+            $bits[] = 'T ' . format_qty($visit['temp_c']) . '°C';
         }
         if ($visit['weight_kg']) {
-            $bits[] = 'Wt ' . rtrim(rtrim((string) $visit['weight_kg'], '0'), '.') . ' kg';
+            $bits[] = 'Wt ' . format_qty($visit['weight_kg']) . ' kg';
         }
         echo e($bits ? implode(' · ', $bits) : '—');
         ?>
@@ -53,7 +53,7 @@ ob_start();
             <?php foreach ($visit['medications'] as $med): ?>
                 <li>
                     <span class="who"><?= e($med['name']) ?><?= $med['strength'] ? ' · ' . e($med['strength']) : '' ?></span>
-                    <span class="mono"><?= e(rtrim(rtrim((string) $med['quantity'], '0'), '.')) ?> <?= e($med['unit']) ?></span>
+                    <span class="mono"><?= e(format_qty($med['quantity'])) ?> <?= e($med['unit']) ?></span>
                     <span class="meta"><?= e($med['dose_instructions'] ?: 'No dose note') ?></span>
                 </li>
             <?php endforeach; ?>

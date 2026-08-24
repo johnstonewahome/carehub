@@ -62,7 +62,7 @@ ob_start();
                         <span class="vial-fill"></span>
                     </span>
                         <span class="who"><?= e($m['name']) ?></span>
-                        <span class="mono warn"><?= e(rtrim(rtrim($m['quantity_on_hand'], '0'), '.')) ?> <?= e($m['unit']) ?></span>
+                        <span class="mono warn"><?= e(format_qty($m['quantity_on_hand'])) ?> <?= e($m['unit']) ?></span>
                     </a>
                 </li>
             <?php endforeach; ?>

@@ -69,8 +69,8 @@ ob_start();
         <?= $medicine['strength'] ? ' · ' . e($medicine['strength']) : '' ?>
     </p>
     <p class="mono<?= $low ? ' warn' : ' ok' ?>">
-        <?= e(rtrim(rtrim((string) $medicine['quantity_on_hand'], '0'), '.')) ?> <?= e($medicine['unit']) ?> on hand
-        <?php if ($low): ?> · at or below reorder line of <?= e(rtrim(rtrim((string) $medicine['reorder_level'], '0'), '.')) ?><?php endif; ?>
+        <?= e(format_qty($medicine['quantity_on_hand'])) ?> <?= e($medicine['unit']) ?> on hand
+        <?php if ($low): ?> · at or below reorder line of <?= e(format_qty($medicine['reorder_level'])) ?><?php endif; ?>
     </p>
 </header>
 
@@ -157,7 +157,7 @@ ob_start();
                 <tr>
                     <td class="mono"><?= e(format_date($row['created_at'], 'd M Y H:i')) ?></td>
                     <td><?= e($row['type']) ?></td>
-                    <td class="mono"><?= e(rtrim(rtrim((string) $row['quantity'], '0'), '.')) ?></td>
+                    <td class="mono"><?= e(format_qty($row['quantity'])) ?></td>
                     <td>
                         <?= e($row['reason'] ?: '') ?>
                         <?php if (!empty($row['visit_id']) && !empty($row['chart_no'])): ?>

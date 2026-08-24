@@ -35,7 +35,7 @@ ob_start();
                     </span>
                     <span class="who"><?= e($m['name']) ?></span>
                     <span class="meta"><?= e($m['generic_name'] ?: $m['form']) ?><?= $m['strength'] ? ' · ' . e($m['strength']) : '' ?></span>
-                    <span class="mono<?= $low ? ' warn' : '' ?>"><?= e(rtrim(rtrim((string) $m['quantity_on_hand'], '0'), '.')) ?> <?= e($m['unit']) ?></span>
+                    <span class="mono<?= $low ? ' warn' : '' ?>"><?= e(format_qty($m['quantity_on_hand'])) ?> <?= e($m['unit']) ?></span>
                 </a>
             </li>
         <?php endforeach; ?>

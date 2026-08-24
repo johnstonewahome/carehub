@@ -146,6 +146,16 @@ function medicine_form_label(string $form): string
     };
 }
 
+function format_qty(mixed $value): string
+{
+    if ($value === null || $value === '') {
+        return '0';
+    }
+    $formatted = number_format((float) $value, 2, '.', '');
+    $trimmed = rtrim(rtrim($formatted, '0'), '.');
+    return $trimmed === '' ? '0' : $trimmed;
+}
+
 function is_installed(): bool
 {
     return is_file(dirname(__DIR__) . '/config.php');
