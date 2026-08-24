@@ -16,7 +16,7 @@ session_start();
 
 $errors = [];
 $fields = [
-    'clinic_name' => post_string('clinic_name') ?: 'CareHub Clinic',
+    'clinic_name' => post_string('clinic_name') ?: 'Care Center',
     'admin_name' => post_string('admin_name') ?: 'Clinic admin',
     'admin_email' => post_string('admin_email') ?: 'admin@carehub.local',
     'admin_password' => (string) ($_POST['admin_password'] ?? ''),
@@ -97,7 +97,7 @@ ob_start();
     <label>Sign-in password
         <input type="password" name="admin_password" required minlength="8" value="<?= e($fields['admin_password']) ?>">
     </label>
-    <button class="btn" type="submit">Install CareHub</button>
+    <button class="btn" type="submit">Install Care Center</button>
 </form>
 <?php
 render_gate([

@@ -112,8 +112,8 @@ h2 {
 
 .brand-name {
     font-family: var(--display);
-    font-size: 1.35rem;
-    line-height: 1;
+    font-size: 1.15rem;
+    line-height: 1.1;
 }
 
 .brand-sub {

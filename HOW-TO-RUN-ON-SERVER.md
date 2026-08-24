@@ -1,6 +1,6 @@
-# How to run CareHub on a server
+# How to run Care Center on a server
 
-CareHub is a PHP app. The database is the file [`database/schema.sql`](database/schema.sql). You do **not** create a MySQL database in cPanel.
+Care Center is a PHP app. The database is the file [`database/schema.sql`](database/schema.sql). You do **not** create a MySQL database in cPanel.
 
 On install, PHP copies that `.sql` file into `database/carehub.sqlite` on the server. Patient charts and medicine stock then live in that SQLite file.
 
@@ -60,7 +60,7 @@ Fill in:
 | Sign-in email | The email you will use every day |
 | Sign-in password | At least 8 characters |
 
-Submit **Install CareHub**. You should land on the sign-in screen.
+Submit **Install Care Center**. You should land on the sign-in screen.
 
 ## 4. Sign in and lock the install
 

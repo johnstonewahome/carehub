@@ -1,4 +1,4 @@
--- CareHub clinic database
+-- Care Center clinic database
 -- SQLite. The live file is created from this script (database/carehub.sqlite).
 -- Default login after seed: admin@carehub.local / ChangeMe!23
 

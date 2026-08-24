@@ -1,4 +1,4 @@
-# CareHub clinic design
+# Care Center clinic design
 
 Date: 2026-08-24
 

@@ -1,4 +1,4 @@
-# CareHub
+# Care Center
 
 A one-clinician clinic app: patient charts over time, plus a medicine shelf that counts down when you use stock on a visit.
 
