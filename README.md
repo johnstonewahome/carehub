@@ -21,6 +21,10 @@ Default sign-in after the seed: `admin@carehub.local` / `ChangeMe!23`
 
 ## Install on shared hosting
 
+Step-by-step server instructions: [HOW-TO-RUN-ON-SERVER.md](HOW-TO-RUN-ON-SERVER.md).
+
+Short version:
+
 1. Upload this folder to `public_html` (or a subfolder).
 2. Make sure PHP has the `pdo_sqlite` extension (usual on shared hosts).
 3. Make the `database/` folder writable.
