@@ -1,105 +1,99 @@
--- CareHub clinic schema
--- Import in phpMyAdmin or via install.php
+-- CareHub clinic database
+-- SQLite. The live file is created from this script (database/carehub.sqlite).
 -- Default login after seed: admin@carehub.local / ChangeMe!23
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name VARCHAR(120) NOT NULL,
-  email VARCHAR(190) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY users_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 
 CREATE TABLE IF NOT EXISTS patients (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  chart_no VARCHAR(16) NOT NULL,
-  first_name VARCHAR(80) NOT NULL,
-  last_name VARCHAR(80) NOT NULL,
-  sex ENUM('female','male','other') NOT NULL DEFAULT 'other',
-  dob DATE NULL,
-  phone VARCHAR(40) NULL,
-  address VARCHAR(255) NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  chart_no TEXT NOT NULL UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  sex TEXT NOT NULL DEFAULT 'other' CHECK (sex IN ('female', 'male', 'other')),
+  dob TEXT NULL,
+  phone TEXT NULL,
+  address TEXT NULL,
   allergies TEXT NULL,
   medical_history TEXT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY patients_chart_no (chart_no),
-  KEY patients_name (last_name, first_name),
-  KEY patients_phone (phone)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS patients_name ON patients (last_name, first_name);
+CREATE INDEX IF NOT EXISTS patients_phone ON patients (phone);
 
 CREATE TABLE IF NOT EXISTS visits (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  patient_id INT UNSIGNED NOT NULL,
-  visited_at DATETIME NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id INTEGER NOT NULL,
+  visited_at TEXT NOT NULL,
   chief_complaint TEXT NULL,
   examination TEXT NULL,
   diagnosis TEXT NULL,
   treatment TEXT NULL,
-  bp_systolic SMALLINT UNSIGNED NULL,
-  bp_diastolic SMALLINT UNSIGNED NULL,
-  pulse SMALLINT UNSIGNED NULL,
-  temp_c DECIMAL(4,1) NULL,
-  weight_kg DECIMAL(5,1) NULL,
+  bp_systolic INTEGER NULL,
+  bp_diastolic INTEGER NULL,
+  pulse INTEGER NULL,
+  temp_c REAL NULL,
+  weight_kg REAL NULL,
   notes TEXT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  KEY visits_patient_visited (patient_id, visited_at),
-  CONSTRAINT visits_patient_fk FOREIGN KEY (patient_id) REFERENCES patients (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (patient_id) REFERENCES patients (id)
+);
+
+CREATE INDEX IF NOT EXISTS visits_patient_visited ON visits (patient_id, visited_at);
 
 CREATE TABLE IF NOT EXISTS medicines (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name VARCHAR(160) NOT NULL,
-  generic_name VARCHAR(160) NULL,
-  form ENUM('tablet','syrup','injection','cream','other') NOT NULL DEFAULT 'tablet',
-  strength VARCHAR(80) NULL,
-  unit VARCHAR(40) NOT NULL DEFAULT 'tablets',
-  quantity_on_hand DECIMAL(12,2) NOT NULL DEFAULT 0,
-  reorder_level DECIMAL(12,2) NOT NULL DEFAULT 0,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  generic_name TEXT NULL,
+  form TEXT NOT NULL DEFAULT 'tablet' CHECK (form IN ('tablet', 'syrup', 'injection', 'cream', 'other')),
+  strength TEXT NULL,
+  unit TEXT NOT NULL DEFAULT 'tablets',
+  quantity_on_hand REAL NOT NULL DEFAULT 0,
+  reorder_level REAL NOT NULL DEFAULT 0,
   notes TEXT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  KEY medicines_name (name),
-  KEY medicines_generic (generic_name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS medicines_name ON medicines (name);
+CREATE INDEX IF NOT EXISTS medicines_generic ON medicines (generic_name);
 
 CREATE TABLE IF NOT EXISTS stock_movements (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  medicine_id INT UNSIGNED NOT NULL,
-  type ENUM('in','out','adjust') NOT NULL,
-  quantity DECIMAL(12,2) NOT NULL,
-  reason VARCHAR(255) NULL,
-  visit_id INT UNSIGNED NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  KEY stock_medicine_created (medicine_id, created_at),
-  KEY stock_visit (visit_id),
-  CONSTRAINT stock_medicine_fk FOREIGN KEY (medicine_id) REFERENCES medicines (id),
-  CONSTRAINT stock_visit_fk FOREIGN KEY (visit_id) REFERENCES visits (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  medicine_id INTEGER NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('in', 'out', 'adjust')),
+  quantity REAL NOT NULL,
+  reason TEXT NULL,
+  visit_id INTEGER NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (medicine_id) REFERENCES medicines (id),
+  FOREIGN KEY (visit_id) REFERENCES visits (id)
+);
+
+CREATE INDEX IF NOT EXISTS stock_medicine_created ON stock_movements (medicine_id, created_at);
+CREATE INDEX IF NOT EXISTS stock_visit ON stock_movements (visit_id);
 
 CREATE TABLE IF NOT EXISTS visit_medications (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  visit_id INT UNSIGNED NOT NULL,
-  medicine_id INT UNSIGNED NOT NULL,
-  quantity DECIMAL(12,2) NOT NULL,
-  dose_instructions VARCHAR(255) NULL,
-  PRIMARY KEY (id),
-  KEY visit_meds_visit (visit_id),
-  KEY visit_meds_medicine (medicine_id),
-  CONSTRAINT visit_meds_visit_fk FOREIGN KEY (visit_id) REFERENCES visits (id),
-  CONSTRAINT visit_meds_medicine_fk FOREIGN KEY (medicine_id) REFERENCES medicines (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  visit_id INTEGER NOT NULL,
+  medicine_id INTEGER NOT NULL,
+  quantity REAL NOT NULL,
+  dose_instructions TEXT NULL,
+  FOREIGN KEY (visit_id) REFERENCES visits (id),
+  FOREIGN KEY (medicine_id) REFERENCES medicines (id)
+);
 
-SET FOREIGN_KEY_CHECKS = 1;
+CREATE INDEX IF NOT EXISTS visit_meds_visit ON visit_medications (visit_id);
+CREATE INDEX IF NOT EXISTS visit_meds_medicine ON visit_medications (medicine_id);
 
 INSERT INTO users (name, email, password_hash) VALUES
 ('Clinic admin', 'admin@carehub.local', '$2y$10$UDUnB.gUGRZ/GsSNHTiKpOAce3.LsPH/x89Rsz4QaFi1JW6/HhoNO');

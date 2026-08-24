@@ -128,7 +128,7 @@ class Stock
     private function lockAndApply(int $medicineId, float $delta): void
     {
         $stmt = $this->db->prepare(
-            'SELECT quantity_on_hand FROM medicines WHERE id = ? FOR UPDATE'
+            'SELECT quantity_on_hand FROM medicines WHERE id = ?'
         );
         $stmt->execute([$medicineId]);
         $current = $stmt->fetchColumn();

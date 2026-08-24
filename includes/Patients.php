@@ -23,7 +23,7 @@ class Patients
                 OR first_name LIKE ?
                 OR last_name LIKE ?
                 OR phone LIKE ?
-                OR CONCAT(first_name, " ", last_name) LIKE ?
+                OR (first_name || \' \' || last_name) LIKE ?
              ORDER BY last_name, first_name
              LIMIT ' . (int) $limit
         );

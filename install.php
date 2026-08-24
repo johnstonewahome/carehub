@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/layout.php';
 
@@ -13,22 +14,8 @@ if (is_installed()) {
 session_name('carehub');
 session_start();
 
-function install_run_sql(PDO $pdo, string $sql): void
-{
-    $sql = preg_replace('/--.*$/m', '', $sql) ?? $sql;
-    foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
-        if ($statement !== '') {
-            $pdo->exec($statement);
-        }
-    }
-}
-
 $errors = [];
 $fields = [
-    'db_host' => post_string('db_host') ?: 'localhost',
-    'db_name' => post_string('db_name') ?: 'carehub',
-    'db_user' => post_string('db_user') ?: '',
-    'db_pass' => (string) ($_POST['db_pass'] ?? ''),
     'clinic_name' => post_string('clinic_name') ?: 'CareHub Clinic',
     'admin_name' => post_string('admin_name') ?: 'Clinic admin',
     'admin_email' => post_string('admin_email') ?: 'admin@carehub.local',
@@ -41,38 +28,34 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if (!is_string($token) || !hash_equals(csrf_token(), $token)) {
         $errors[] = 'This form expired. Try again.';
     }
-    if ($fields['db_name'] === '' || $fields['db_user'] === '') {
-        $errors[] = 'Database name and user are required.';
-    }
     if (strlen($fields['admin_password']) < 8) {
         $errors[] = 'Admin password must be at least 8 characters.';
     }
     if ($errors === []) {
         try {
-            $pdo = new PDO(
-                'mysql:host=' . $fields['db_host'] . ';dbname=' . $fields['db_name'] . ';charset=utf8mb4',
-                $fields['db_user'],
-                $fields['db_pass'],
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ]
-            );
-            $schema = file_get_contents(__DIR__ . '/database/schema.sql');
-            if ($schema === false) {
-                throw new RuntimeException('Could not read database/schema.sql');
+            $sqlitePath = dirname(__FILE__) . '/database/carehub.sqlite';
+            if (is_file($sqlitePath)) {
+                unlink($sqlitePath);
             }
-            install_run_sql($pdo, $schema);
-            $hash = password_hash($fields['admin_password'], PASSWORD_DEFAULT);
-            $update = $pdo->prepare('UPDATE users SET name = ?, email = ?, password_hash = ? ORDER BY id ASC LIMIT 1');
-            $update->execute([$fields['admin_name'], $fields['admin_email'], $hash]);
+            $pdo = sqlite_connect($sqlitePath);
+            apply_schema($pdo);
+            $id = $pdo->query('SELECT id FROM users ORDER BY id ASC LIMIT 1')->fetchColumn();
+            if ($id === false) {
+                throw new RuntimeException('schema.sql did not create a sign-in user.');
+            }
+            $update = $pdo->prepare(
+                'UPDATE users SET name = ?, email = ?, password_hash = ? WHERE id = ?'
+            );
+            $update->execute([
+                $fields['admin_name'],
+                $fields['admin_email'],
+                password_hash($fields['admin_password'], PASSWORD_DEFAULT),
+                (int) $id,
+            ]);
 
             $config = [
-                'db_host' => $fields['db_host'],
-                'db_name' => $fields['db_name'],
-                'db_user' => $fields['db_user'],
-                'db_pass' => $fields['db_pass'],
                 'clinic_name' => $fields['clinic_name'],
+                'database_path' => 'database/carehub.sqlite',
                 'base_path' => trim($fields['base_path'], '/'),
             ];
             $export = var_export($config, true);
@@ -93,6 +76,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
 ob_start();
 ?>
+<p class="hint">The clinic records live in <span class="mono">database/schema.sql</span>. Install copies that file into a local SQLite database on this server.</p>
 <?php foreach ($errors as $err): ?>
     <p class="flash flash-error"><?= e($err) ?></p>
 <?php endforeach; ?>
@@ -100,18 +84,6 @@ ob_start();
     <?= csrf_field() ?>
     <label>Clinic name
         <input name="clinic_name" required value="<?= e($fields['clinic_name']) ?>">
-    </label>
-    <label>MySQL host
-        <input name="db_host" required value="<?= e($fields['db_host']) ?>">
-    </label>
-    <label>Database name
-        <input name="db_name" required value="<?= e($fields['db_name']) ?>">
-    </label>
-    <label>Database user
-        <input name="db_user" required value="<?= e($fields['db_user']) ?>">
-    </label>
-    <label>Database password
-        <input type="password" name="db_pass" value="<?= e($fields['db_pass']) ?>">
     </label>
     <label>Subfolder (leave blank at domain root)
         <input name="base_path" placeholder="carehub" value="<?= e($fields['base_path']) ?>">

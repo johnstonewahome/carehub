@@ -2,7 +2,13 @@
 
 A one-clinician clinic app: patient charts over time, plus a medicine shelf that counts down when you use stock on a visit.
 
-Built for shared hosting. PHP 8.0+ and MySQL. No Composer, no Node.
+Built for shared hosting. PHP 8.0+ and a `.sql` file. No MySQL server, no Composer, no Node.
+
+## Database
+
+All tables and seed records live in [`database/schema.sql`](database/schema.sql). On install (or first run) PHP loads that script into `database/carehub.sqlite`. Upload the `.sql` file with the app; you do not create a database in cPanel.
+
+Default sign-in after the seed: `admin@carehub.local` / `ChangeMe!23`
 
 ## What it does
 
@@ -15,37 +21,31 @@ Built for shared hosting. PHP 8.0+ and MySQL. No Composer, no Node.
 
 ## Install on shared hosting
 
-1. Create a MySQL database and user in cPanel (or equivalent).
-2. Upload this folder to `public_html` (or a subfolder).
-3. Open `/install.php` in the browser.
-4. Enter the database details, clinic name, and your sign-in email/password.
+1. Upload this folder to `public_html` (or a subfolder).
+2. Make sure PHP has the `pdo_sqlite` extension (usual on shared hosts).
+3. Make the `database/` folder writable.
+4. Open `/install.php` in the browser and set clinic name plus your sign-in.
 5. Delete `install.php` after it succeeds.
-
-If you prefer phpMyAdmin:
-
-1. Import [`database/schema.sql`](database/schema.sql).
-2. Copy `config.example.php` to `config.php` and fill in the database settings.
-3. Sign in with `admin@carehub.local` / `ChangeMe!23`, then change the password.
 
 If the app lives in a subfolder, set `base_path` to that folder name (`carehub`) so links keep working.
 
-Needs Apache `mod_rewrite`. PHP needs `pdo_mysql`.
+Needs Apache `mod_rewrite`. The `.sql` / `.sqlite` files are blocked from the web by `.htaccess`.
+
+Copy `config.example.php` to `config.php` if you want to skip the wizard; the SQLite file is created from `schema.sql` on first page load.
 
 ## Local development
 
 ```bash
-# after creating the MySQL database and importing schema.sql
+cp config.example.php config.php
 php -S localhost:8080 router.php
 ```
 
-Run stock tests:
+Run tests (in-memory SQLite, no extra setup):
 
 ```bash
 php tests/run.php
 ```
 
-Tests use the `carehub_test` database (override with `CAREHUB_TEST_HOST`, `CAREHUB_TEST_DB`, `CAREHUB_TEST_USER`, `CAREHUB_TEST_PASS`).
-
 ## Default seed
 
-Schema seeds three patients and five medicines so the cabinet is not empty. Paracetamol is intentionally below its reorder line to show the low-stock strip.
+`schema.sql` seeds three patients and five medicines so the cabinet is not empty. Paracetamol is intentionally below its reorder line to show the low-stock strip.

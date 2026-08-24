@@ -8,7 +8,7 @@ A one-clinician consulting room. Audience: a solo clinician between patients. Si
 
 ## Product
 
-PHP 8 + MySQL, server-rendered, no Composer. One login. Longitudinal patient charts. Medicine inventory with stock in, adjustments, and deduction when dispensed on a visit. Low-stock alerts. Shared-hosting deploy via `schema.sql` or `install.php`.
+PHP 8 + SQLite from `database/schema.sql`, server-rendered, no Composer. One login. Longitudinal patient charts. Medicine inventory with stock in, adjustments, and deduction when dispensed on a visit. Low-stock alerts. Shared-hosting deploy: upload the `.sql` file and run `install.php`.
 
 ## Visual tokens
 

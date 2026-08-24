@@ -2,10 +2,7 @@
 declare(strict_types=1);
 
 return [
-    'db_host' => 'localhost',
-    'db_name' => 'carehub',
-    'db_user' => 'carehub',
-    'db_pass' => 'your_mysql_password',
     'clinic_name' => 'CareHub Clinic',
+    'database_path' => 'database/carehub.sqlite',
     'base_path' => '',
 ];
