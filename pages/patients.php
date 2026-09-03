@@ -14,6 +14,7 @@ ob_start();
         <input id="q" type="search" name="q" value="<?= e($q) ?>" placeholder="Name, chart number, or phone">
         <button class="btn" type="submit">Search</button>
         <a class="btn btn-quiet" href="<?= e(url('patients/new')) ?>">New patient</a>
+        <a class="btn btn-quiet" href="<?= e(url('export.xlsx')) ?>">Export Excel</a>
     </form>
 </header>
 

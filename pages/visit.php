@@ -66,7 +66,10 @@ ob_start();
     <p class="eyebrow">On <?= e($patient['chart_no']) ?></p>
     <h1 class="patient-name"><?= e($patient['first_name'] . ' ' . $patient['last_name']) ?></h1>
     <?php if (!empty($patient['allergies'])): ?>
-        <p class="allergy-strip">Allergies: <?= e($patient['allergies']) ?></p>
+        <p class="pmshx-strip">
+            <span class="pmshx-label">PMSHX</span>
+            <?= e($patient['allergies']) ?>
+        </p>
     <?php endif; ?>
 </header>
 

@@ -9,6 +9,8 @@ require_once __DIR__ . '/Stock.php';
 require_once __DIR__ . '/Patients.php';
 require_once __DIR__ . '/Visits.php';
 require_once __DIR__ . '/Medicines.php';
+require_once __DIR__ . '/Excel.php';
+require_once __DIR__ . '/ClinicExport.php';
 require_once __DIR__ . '/layout.php';
 
 function boot_session(): void

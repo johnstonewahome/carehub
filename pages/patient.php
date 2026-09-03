@@ -56,9 +56,16 @@ ob_start();
         <?php if (!empty($patient['phone'])): ?> · <?= e($patient['phone']) ?><?php endif; ?>
     </p>
     <?php if (!empty($patient['allergies'])): ?>
-        <p class="allergy-strip">Allergies: <?= e($patient['allergies']) ?></p>
-    <?php else: ?>
-        <p class="allergy-strip allergy-none">No allergies recorded</p>
+        <p class="pmshx-strip">
+            <span class="pmshx-label">PMSHX</span>
+            <?= e($patient['allergies']) ?>
+        </p>
+    <?php endif; ?>
+    <?php if (!empty($patient['medical_history'])): ?>
+        <p class="pmshx-strip">
+            <span class="pmshx-label">Medical history</span>
+            <?= e($patient['medical_history']) ?>
+        </p>
     <?php endif; ?>
     <p><a class="btn" href="<?= e(url('patients/' . $patientId . '/visits/new')) ?>">New visit</a></p>
 </header>

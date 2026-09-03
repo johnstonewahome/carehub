@@ -14,7 +14,10 @@ ob_start();
     <h1 class="patient-name"><?= e($visit['first_name'] . ' ' . $visit['last_name']) ?></h1>
     <p class="mono"><?= e(format_date($visit['visited_at'], 'd M Y H:i')) ?></p>
     <?php if (!empty($visit['allergies'])): ?>
-        <p class="allergy-strip">Allergies: <?= e($visit['allergies']) ?></p>
+        <p class="pmshx-strip">
+            <span class="pmshx-label">PMSHX</span>
+            <?= e($visit['allergies']) ?>
+        </p>
     <?php endif; ?>
 </header>
 

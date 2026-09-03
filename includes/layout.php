@@ -39,6 +39,7 @@ function render_app(array $view): void
         <?php if ($user): ?>
         <div class="rail-foot">
             <span class="rail-user"><?= e($user['name']) ?></span>
+            <a href="<?= e(url('export.xlsx')) ?>">Export Excel</a>
             <a href="<?= e(url('password')) ?>">Change password</a>
             <a href="<?= e(url('logout')) ?>">Sign out</a>
         </div>

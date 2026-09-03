@@ -42,6 +42,11 @@ if ($path === '/patients' && $method === 'GET') {
     exit;
 }
 
+if ($path === '/export.xlsx' && $method === 'GET') {
+    require __DIR__ . '/pages/export.php';
+    exit;
+}
+
 if ($path === '/patients/new') {
     require __DIR__ . '/pages/patient_new.php';
     exit;

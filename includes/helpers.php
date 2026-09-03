@@ -160,3 +160,8 @@ function is_installed(): bool
 {
     return is_file(dirname(__DIR__) . '/config.php');
 }
+
+function pmshx_label(): string
+{
+    return 'Past Medical and Surgical history (PMSHX)';
+}

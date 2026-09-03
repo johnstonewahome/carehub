@@ -30,7 +30,6 @@ ob_start();
     </label>
     <button type="submit" class="btn">Open cabinet</button>
 </form>
-<p class="hint">Default after install: admin@carehub.local / ChangeMe!23</p>
 <?php
 render_gate([
     'title' => 'Sign in',

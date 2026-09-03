@@ -26,8 +26,8 @@
     <label>Address
         <input name="address" value="<?= e($data['address']) ?>">
     </label>
-    <label>Allergies
-        <textarea name="allergies" rows="2" placeholder="Leave blank if none known"><?= e($data['allergies']) ?></textarea>
+    <label><?= e(pmshx_label()) ?>
+        <textarea name="allergies" rows="3" placeholder="Hypertension, appendectomy in 2019 — leave blank if none"><?= e($data['allergies']) ?></textarea>
     </label>
     <label>Medical history
         <textarea name="medical_history" rows="3"><?= e($data['medical_history']) ?></textarea>
